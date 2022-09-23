@@ -27,7 +27,7 @@
                     <table class="table table-responsive-xl table-bordered">
                         <div class="form-outline mb-4">
                             <div class="input-group" id="search">
-                                <input type="search" class="form-control rounded" placeholder="Введите id" aria-label="Search" aria-describedby="search-addon" />
+                                <input type="search" class="form-control rounded" placeholder="Введите id"  />
                                 <button type="button" class="btn btn-outline-primary">Поиск</button>
                                 <button type="button" class="btn btn-outline-danger">Удалить все</button>
                             </div>
@@ -66,48 +66,13 @@
         </div>
     </div>
 </section>
-<div class="modal fade" id="modalLoginForm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header text-center">
-                <h4 class="modal-title w-100 font-weight-bold">Sign in</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <form class="modal-body mx-3" th:action="@{/api/contacts}" method="post">
-                <div class="md-form mb-5">
-                    <i class="fas fa-envelope prefix grey-text"></i>
-                    <input type="email" id="defaultForm-email" class="form-control validate">
-                    <label data-error="wrong" data-success="right" for="defaultForm-email">Имя</label>
-                </div>
 
-                <div class="md-form mb-4">
-                    <i class="fas fa-lock prefix grey-text"></i>
-                    <input type="password" id="defaultForm-pass" class="form-control validate">
-                    <label data-error="wrong" data-success="right" for="defaultForm-pass">Фамилися</label>
-                </div>
-
-                <div class="md-form mb-4">
-                    <i class="fas fa-lock prefix grey-text"></i>
-                    <input type="password" id="defaultForm-phone" class="form-control validate">
-                    <label data-error="wrong" data-success="right" for="defaultForm-pass">Номер телефона</label>
-                </div>
-
-            </form>
-            <div class="modal-footer d-flex justify-content-center">
-                <button class="btn btn-default">Login</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script src="js/rest.js"></script>
 <script src="js/jquery.min.js"></script>
 <script src="js/popper.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
+<!--<script src="js/main.js"></script>-->
 
 </body>
 </html>

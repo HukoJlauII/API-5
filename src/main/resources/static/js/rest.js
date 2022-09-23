@@ -1,7 +1,8 @@
 let createForm = document.querySelector('#create')
 let searchBar = document.querySelector('#search')
+let currentLocation = document.location.protocol + "//" + document.location.host;
+console.log(currentLocation)
 searchBar.getElementsByTagName('button')[0].addEventListener('click',findContact,true)
-console.log(searchBar.getElementsByTagName('button')[0])
 searchBar.getElementsByTagName('button')[1].addEventListener('click',deleteAllContacts,true)
 createForm.getElementsByTagName('button')[0].addEventListener('click', createContact, true)
 let tBody = document.querySelector('#tableBody')
@@ -10,14 +11,15 @@ let tBody = document.querySelector('#tableBody')
 
 function loadContacts() {
     $.ajax({
-        url: "http://localhost:8080/api/contacts",
+        url: currentLocation+"/api/contacts",
         type: 'GET',
         contentType: 'application/json',
         success: createAllContacts
     })
 }
 
-let createAllContacts = function (data) {
+let createAllContacts = function (data,textStatus, xhr) {
+    console.log(xhr)
     for (let i = 0; i < data.length; i++) {
         createRow(data[i])
     }
@@ -33,7 +35,7 @@ function createContact() {
             number: createForm.querySelector('#number').value
         }
     $.ajax({
-        url: "http://localhost:8080/api/contacts",
+        url: currentLocation + "/api/contacts",
         type: 'POST',
         contentType: 'application/json',
         data: JSON.stringify(contact),
@@ -46,7 +48,7 @@ function deleteContact(id) {
     const elementToDelete = tBody.querySelector(`#${CSS.escape(id)}`)
     elementToDelete.parentNode.removeChild(elementToDelete)
     $.ajax({
-        url: "http://localhost:8080/api/contacts/" + id,
+        url: currentLocation + "/api/contacts/" + id,
         type: 'DELETE',
         contentType: 'application/json',
     })
@@ -58,7 +60,7 @@ function deleteAllContacts()
         tBody.removeChild(tBody.lastChild)
     }
     $.ajax({
-        url: "http://localhost:8080/api/contacts",
+        url: currentLocation + "/api/contacts",
         type: 'DELETE',
         contentType: 'application/json',
     })
@@ -78,7 +80,7 @@ function putContact(id) {
     currentElement.querySelector('.surname').innerHTML=contact.surname
     currentElement.querySelector('.number').innerHTML=contact.number
     $.ajax({
-        url: "http://localhost:8080/api/contacts/" + id,
+        url: currentLocation + "/api/contacts/" + id,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(contact),
@@ -91,14 +93,17 @@ function findContact()
 {
 
     let id = searchBar.querySelector('.form-control').value
-    console.log(tBody.children)
     while (tBody.children.length>1) {
         tBody.removeChild(tBody.lastChild)
+    }
+    if (id==='')
+    {
+        loadContacts()
     }
     if (/\d+$/.test(id))
     {
         $.ajax({
-            url: "http://localhost:8080/api/contacts/" + id,
+            url: currentLocation + "/api/contacts/" + id,
             type: 'GET',
             contentType: 'application/json',
             success:createContactLine
