@@ -2,26 +2,29 @@ let createForm = document.querySelector('#create')
 let searchBar = document.querySelector('#search')
 let currentLocation = document.location.protocol + "//" + document.location.host;
 console.log(currentLocation)
-searchBar.getElementsByTagName('button')[0].addEventListener('click',findContact,true)
-searchBar.getElementsByTagName('button')[1].addEventListener('click',deleteAllContacts,true)
+searchBar.getElementsByTagName('button')[0].addEventListener('click', findContact, true)
+searchBar.getElementsByTagName('button')[1].addEventListener('click', deleteAllContacts, true)
 createForm.getElementsByTagName('button')[0].addEventListener('click', createContact, true)
 let tBody = document.querySelector('#tableBody')
 
 
-
 function loadContacts() {
     $.ajax({
-        url: currentLocation+"/api/contacts",
+        url: currentLocation + "/api/contacts",
         type: 'GET',
         contentType: 'application/json',
         success: createAllContacts
     })
 }
 
-let createAllContacts = function (data,textStatus, xhr) {
-    console.log(xhr)
-    for (let i = 0; i < data.length; i++) {
-        createRow(data[i])
+let createAllContacts = function (data, textStatus, xhr) {
+
+    if (xhr.status === 204) {
+        createEmptyRow()
+    } else {
+        for (let i = 0; i < data.length; i++) {
+            createRow(data[i])
+        }
     }
 }
 
@@ -54,9 +57,8 @@ function deleteContact(id) {
     })
 }
 
-function deleteAllContacts()
-{
-    while (tBody.children.length>1) {
+function deleteAllContacts() {
+    while (tBody.children.length > 1) {
         tBody.removeChild(tBody.lastChild)
     }
     $.ajax({
@@ -70,53 +72,65 @@ function putContact(id) {
     let currentElement = document.querySelector(`#${CSS.escape(id)}`)
     const contact =
         {
-            id:id,
+            id: id,
             name: currentElement.nextSibling.querySelector('#nameEdit').value,
             surname: currentElement.nextSibling.querySelector('#surnameEdit').value,
             number: currentElement.nextSibling.querySelector('#numberEdit').value
         }
 
-    currentElement.querySelector('.name').innerHTML=contact.name
-    currentElement.querySelector('.surname').innerHTML=contact.surname
-    currentElement.querySelector('.number').innerHTML=contact.number
+    currentElement.querySelector('.name').innerHTML = contact.name
+    currentElement.querySelector('.surname').innerHTML = contact.surname
+    currentElement.querySelector('.number').innerHTML = contact.number
     $.ajax({
         url: currentLocation + "/api/contacts/" + id,
         type: 'PUT',
         contentType: 'application/json',
         data: JSON.stringify(contact),
     })
-    currentElement.style.display='table-row'
+    currentElement.style.display = 'table-row'
     currentElement.parentNode.removeChild(currentElement.nextSibling)
 }
 
-function findContact()
-{
+function findContact() {
 
     let id = searchBar.querySelector('.form-control').value
-    while (tBody.children.length>1) {
+    while (tBody.children.length > 1) {
         tBody.removeChild(tBody.lastChild)
     }
-    if (id==='')
-    {
+    if (id === '') {
         loadContacts()
     }
-    if (/\d+$/.test(id))
-    {
+    if (/\d+$/.test(id)) {
         $.ajax({
             url: currentLocation + "/api/contacts/" + id,
             type: 'GET',
             contentType: 'application/json',
-            success:createContactLine
+            success: createContactLine
         })
     }
 }
 
 
-let createContactLine = function (data) {
-    createRow(data)
+let createContactLine = function (data, textStatus, xhr) {
+    if (xhr.status === 204) {
+        createEmptyRow()
+    } else {
+        createRow(data)
+    }
+}
+
+function createEmptyRow() {
+    const row = document.createElement('tr')
+    row.classList.add(`text-center`)
+    const text = document.createElement('td')
+    text.colSpan = 4
+    text.innerHTML = "Контакта с таким id не существует"
+    row.appendChild(text)
+    tBody.appendChild(row)
 }
 
 function createRow(data) {
+    console.log(data)
     const row = document.createElement('tr')
     row.id = data.id
     row.classList.add(`text-center`)
@@ -151,7 +165,7 @@ function createRow(data) {
 
 function showEditForm(id) {
     const currentElement = document.querySelector(`#${CSS.escape(id)}`)
-    currentElement.style.display='none'
+    currentElement.style.display = 'none'
     const editForm = document.createElement('tr')
     editForm.classList.add(`text-center`)
     editForm.innerHTML = '<td class="d-flex align-items-center">\n' +
